@@ -1,7 +1,6 @@
 package fakes
 
 import (
-	"net/http"
 	"time"
 
 	"github.com/pivotal-pez/cfmgo"
@@ -9,37 +8,6 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
-
-const (
-	FakeCollectionHasChanges       = 1
-	FakeCollectionHasNoChanges     = 0
-	FakeCollectionHasNilChangeInfo = -1
-)
-
-//FakeNewCollectionDialer -
-func FakeNewCollectionDialer(c coda.Task) func(url, dbname, collectionname string) (col cfmgo.Collection, err error) {
-	return func(url, dbname, collectionname string) (col cfmgo.Collection, err error) {
-		col = &FakeCollection{
-			ControlTask: c,
-		}
-		return
-	}
-}
-
-//MockClientDoer -
-type MockClientDoer struct {
-	Req *http.Request
-	Res *http.Response
-	Err error
-}
-
-//Do -
-func (s *MockClientDoer) Do(rq *http.Request) (rs *http.Response, e error) {
-	s.Req = rq
-	rs = s.Res
-	e = s.Err
-	return
-}
 
 //FakeTaskManager - this is a fake representation of the task manager
 type FakeTaskManager struct {
