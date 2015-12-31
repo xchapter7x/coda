@@ -25,12 +25,12 @@ func (s Agent) Run(process func(Agent) error) {
 	go s.startTaskPoller()
 	go s.listenForPoll()
 	go func(agent Agent) {
-		agent.processExitHanderlDecorate(process)
+		agent.processExitHandlerDecorate(process)
 		<-agent.processComplete
 	}(s)
 }
 
-func (s Agent) processExitHanderlDecorate(process func(Agent) error) {
+func (s Agent) processExitHandlerDecorate(process func(Agent) error) {
 	err := process(s)
 	fmt.Println("Done Agent process", process, err)
 	s.taskPollEmitter <- false
