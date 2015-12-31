@@ -1,5 +1,6 @@
 package coda
 
+//NewTask - a helper to create a new task
 func NewTask() Task {
 	return Task{}
 }
