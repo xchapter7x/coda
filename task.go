@@ -2,19 +2,18 @@ package coda
 
 //NewTask - a helper to create a new task
 func NewTask() Task {
-	return Task{}
+	return Task{
+		MetaData: make(map[string]interface{}),
+	}
 }
 
-//SetPublicMeta - set a public metadata record
+//SetMeta - set a public metadata record
 func (s Task) SetMeta(name string, value interface{}) Task {
-	if s.MetaData == nil {
-		s.MetaData = make(map[string]interface{})
-	}
 	s.MetaData[name] = value
 	return s
 }
 
-//GetPublicMeta - get a public metadata record
+//GetMeta - get a public metadata record
 func (s Task) GetMeta(name string) interface{} {
 	return s.MetaData[name]
 }
