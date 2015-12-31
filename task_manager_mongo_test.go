@@ -16,7 +16,7 @@ var _ = Describe("TaskManager", func() {
 
 	Describe("Given: .SubscribeToSchedule()", func() {
 		var (
-			tm             *TaskManager
+			tm             *TaskManagerMongo
 			fakeCollection *fakes.FakeCollection
 			controlStatus  = "fakeTaskStatus"
 			controlTask    = Task{
@@ -30,7 +30,7 @@ var _ = Describe("TaskManager", func() {
 			fakeCollection.AssignResult = func(r, s interface{}) {
 				*(r.(*Task)) = s.(Task)
 			}
-			tm = NewTaskManager(fakeCollection)
+			tm = NewTaskManagerMongo(fakeCollection)
 		})
 		Context("When: their is a scheduled task to publish", func() {
 			It("Then: it should yield the task through the returned channel", func() {
@@ -42,12 +42,12 @@ var _ = Describe("TaskManager", func() {
 	Describe("given ScheduleTask method", func() {
 		Context("when called with a valid Task and Time object", func() {
 			var (
-				controlTaskManager *TaskManager
+				controlTaskManager *TaskManagerMongo
 				controlExpires     = time.Now()
 				controlTask        Task
 			)
 			BeforeEach(func() {
-				controlTaskManager = new(TaskManager)
+				controlTaskManager = new(TaskManagerMongo)
 				controlTask = controlTaskManager.NewTask("fake-agent", TaskLongPollQueue, "fake-stat")
 				controlTask = controlTaskManager.ScheduleTask(controlTask, controlExpires)
 			})
@@ -60,12 +60,12 @@ var _ = Describe("TaskManager", func() {
 	})
 	Describe("Given: .GarbageCollectExpiredAgents method", func() {
 
-		var tm *TaskManager
+		var tm *TaskManagerMongo
 
 		Context("when: called and it finds expired agents", func() {
 			var controlUpdateCount = 25
 			BeforeEach(func() {
-				tm = NewTaskManager(&fakes.FakeCollection{
+				tm = NewTaskManagerMongo(&fakes.FakeCollection{
 					FakeChangeInfo: &mgo.ChangeInfo{
 						Updated: controlUpdateCount,
 					},
@@ -79,10 +79,10 @@ var _ = Describe("TaskManager", func() {
 		})
 	})
 	Describe("Given: .FindAndStallTaskForCaller()", func() {
-		var tm *TaskManager
+		var tm *TaskManagerMongo
 
 		BeforeEach(func() {
-			tm = NewTaskManager(new(fakes.FakeCollection))
+			tm = NewTaskManagerMongo(new(fakes.FakeCollection))
 		})
 		Context("When: call yields no results", func() {
 			It("Then: it should return a no-results error", func() {
@@ -94,10 +94,10 @@ var _ = Describe("TaskManager", func() {
 	})
 
 	Describe(".FindTask()", func() {
-		var tm *TaskManager
+		var tm *TaskManagerMongo
 
 		BeforeEach(func() {
-			tm = NewTaskManager(new(fakes.FakeCollection))
+			tm = NewTaskManagerMongo(new(fakes.FakeCollection))
 		})
 		Context("when called", func() {
 			It("Should do nothing right now", func() {
@@ -108,10 +108,10 @@ var _ = Describe("TaskManager", func() {
 	})
 
 	Describe(".NewTask()", func() {
-		var tm *TaskManager
+		var tm *TaskManagerMongo
 
 		BeforeEach(func() {
-			tm = NewTaskManager(new(fakes.FakeCollection))
+			tm = NewTaskManagerMongo(new(fakes.FakeCollection))
 		})
 		Context("when called", func() {
 			It("Should return a newly initialized task", func() {
@@ -124,10 +124,10 @@ var _ = Describe("TaskManager", func() {
 	})
 
 	Describe(".SaveTask()", func() {
-		var tm *TaskManager
+		var tm *TaskManagerMongo
 
 		BeforeEach(func() {
-			tm = NewTaskManager(new(fakes.FakeCollection))
+			tm = NewTaskManagerMongo(new(fakes.FakeCollection))
 		})
 		Context("when given an existing task", func() {
 			It("should update the task", func() {

@@ -13,7 +13,7 @@ var _ = Describe("Task", func() {
 				controlPublicMetaKey = "hithere"
 				controlCaller        = "caller_nnnn"
 				controlStatus        = "somestatus"
-				task                 = NewTaskManager(nil).NewTask(controlCaller, TaskLongPollQueue, controlStatus)
+				task                 = NewTaskManagerMongo(nil).NewTask(controlCaller, TaskLongPollQueue, controlStatus)
 			)
 			BeforeEach(func() {
 				task = task.SetMeta(controlPublicMetaKey, controlStatus)

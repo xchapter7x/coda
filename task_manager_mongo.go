@@ -10,15 +10,15 @@ import (
 )
 
 //NewTaskManager - this creates a new task manager object and returns it
-func NewTaskManager(taskCollection collection) (tm *TaskManager) {
-	tm = &TaskManager{
+func NewTaskManagerMongo(taskCollection collection) (tm *TaskManagerMongo) {
+	tm = &TaskManagerMongo{
 		taskCollection: taskCollection,
 	}
 	return
 }
 
 //SaveTask - saves the given task
-func (s *TaskManager) SaveTask(t Task) (Task, error) {
+func (s *TaskManagerMongo) SaveTask(t Task) (Task, error) {
 
 	if t.ID.Hex() == "" {
 		t.ID = bson.NewObjectId()
@@ -29,7 +29,7 @@ func (s *TaskManager) SaveTask(t Task) (Task, error) {
 
 //FindAndStallTaskForCaller - find and lock the first matching task, then return
 //it
-func (s *TaskManager) FindAndStallTaskForCaller(callerName string) (task Task, err error) {
+func (s *TaskManagerMongo) FindAndStallTaskForCaller(callerName string) (task Task, err error) {
 	nowEpoch := time.Now().UnixNano()
 	task = Task{}
 	s.taskCollection.FindAndModify(
@@ -53,7 +53,7 @@ func (s *TaskManager) FindAndStallTaskForCaller(callerName string) (task Task, e
 	return
 }
 
-func (s *TaskManager) isDefaultTask(task Task) bool {
+func (s *TaskManagerMongo) isDefaultTask(task Task) bool {
 	defaultTask := Task{}
 	return (task.ID == defaultTask.ID &&
 		task.Timestamp == defaultTask.Timestamp &&
@@ -64,7 +64,7 @@ func (s *TaskManager) isDefaultTask(task Task) bool {
 }
 
 //FindTask - this will find and return a task with a given ID
-func (s *TaskManager) FindTask(id string) (t Task, err error) {
+func (s *TaskManagerMongo) FindTask(id string) (t Task, err error) {
 	t = Task{}
 	err = s.taskCollection.FindOne(id, &t)
 	return
@@ -72,7 +72,7 @@ func (s *TaskManager) FindTask(id string) (t Task, err error) {
 
 //SubscribeToSchedule - subscribe to a schedule and get a channel to listen on
 //for a task when it hits its scheduled time
-func (s *TaskManager) SubscribeToSchedule(callerName string) (subscription chan Task) {
+func (s *TaskManagerMongo) SubscribeToSchedule(callerName string) (subscription chan Task) {
 	subscription = make(chan Task, 1)
 	go func() {
 		for {
@@ -104,7 +104,7 @@ func (s *TaskManager) SubscribeToSchedule(callerName string) (subscription chan 
 }
 
 // ScheduleTask --
-func (s *TaskManager) ScheduleTask(task Task, expireTime time.Time) Task {
+func (s *TaskManagerMongo) ScheduleTask(task Task, expireTime time.Time) Task {
 	task.Expires = expireTime.UnixNano()
 	task.Profile = TaskAgentScheduledTask
 	task.Status = AgentTaskStatusScheduled
@@ -112,7 +112,7 @@ func (s *TaskManager) ScheduleTask(task Task, expireTime time.Time) Task {
 }
 
 // GarbageCollectExpiredAgents --
-func (s *TaskManager) GarbageCollectExpiredAgents(callerName string) (changeInfo *mgo.ChangeInfo, err error) {
+func (s *TaskManagerMongo) GarbageCollectExpiredAgents(callerName string) (changeInfo *mgo.ChangeInfo, err error) {
 	nowEpoch := time.Now().UnixNano()
 	changeInfo, err = s.taskCollection.FindAndModify(
 		bson.M{
@@ -134,7 +134,7 @@ func (s *TaskManager) GarbageCollectExpiredAgents(callerName string) (changeInfo
 }
 
 //NewTask - get us a new empty task
-func (s *TaskManager) NewTask(callerName string, profile ProfileType, status string) (t Task) {
+func (s *TaskManagerMongo) NewTask(callerName string, profile ProfileType, status string) (t Task) {
 	t = NewTask()
 	t.CallerName = callerName
 	t.Profile = profile

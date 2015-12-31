@@ -6,7 +6,7 @@ import (
 )
 
 //NewAgent -- creates a new initialized agent object
-func NewAgent(t TaskManagerInterface, callerName string) Agent {
+func NewAgent(t TaskManager, callerName string) Agent {
 	return Agent{
 		killTaskPoller:  make(chan bool, 1),
 		processComplete: make(chan bool, 1),
