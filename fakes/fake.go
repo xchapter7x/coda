@@ -3,7 +3,6 @@ package fakes
 import (
 	"time"
 
-	"github.com/pivotal-pez/cfmgo"
 	"github.com/xchapter7x/coda"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -78,7 +77,6 @@ func NewFakeCollection(updated int) *FakeCollection {
 
 //FakeCollection -
 type FakeCollection struct {
-	cfmgo.Collection
 	ControlTask             coda.Task
 	ErrControl              error
 	FakeChangeInfo          *mgo.ChangeInfo

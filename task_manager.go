@@ -6,12 +6,11 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/pivotal-pez/cfmgo"
 	"github.com/xchapter7x/lo"
 )
 
 //NewTaskManager - this creates a new task manager object and returns it
-func NewTaskManager(taskCollection cfmgo.Collection) (tm *TaskManager) {
+func NewTaskManager(taskCollection collection) (tm *TaskManager) {
 	tm = &TaskManager{
 		taskCollection: taskCollection,
 	}

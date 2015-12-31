@@ -3,7 +3,7 @@ package coda
 import (
 	"time"
 
-	"github.com/pivotal-pez/cfmgo"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -35,7 +35,7 @@ type (
 
 	//TaskManager - manages task interactions crud stuff
 	TaskManager struct {
-		taskCollection cfmgo.Collection
+		taskCollection collection
 	}
 
 	//Agent an object which knows how to handle long running tasks. polling,
@@ -51,4 +51,12 @@ type (
 
 	//ProfileType - indicator of the purpose of the task to be performed
 	ProfileType string
+
+	collection interface {
+		Wake()
+		Close()
+		FindOne(id string, result interface{}) (err error)
+		UpsertID(selector interface{}, update interface{}) (info *mgo.ChangeInfo, err error)
+		FindAndModify(selector interface{}, update interface{}, target interface{}) (info *mgo.ChangeInfo, err error)
+	}
 )
